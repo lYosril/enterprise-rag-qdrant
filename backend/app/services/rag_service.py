@@ -1,6 +1,6 @@
 
 import requests
-
+from qdrant_client.models import FieldCondition, Filter, MatchValue
 from app.core.config import settings
 from app.services.document_service import (
     embedding_model,
@@ -9,7 +9,7 @@ from app.services.document_service import (
 )
 
 
-def answer_question(question: str) -> dict:
+def answer_question(question: str, owner_id: str) -> dict:
     ensure_collection()
 
     query_vector = embedding_model.encode(
@@ -20,6 +20,14 @@ def answer_question(question: str) -> dict:
     results = qdrant.query_points(
         collection_name=settings.qdrant_collection,
         query=query_vector,
+        query_filter=Filter(
+            must=[
+                FieldCondition(
+                    key="owner_id",
+                    match=MatchValue(value=owner_id),
+                )
+            ]
+        ),
         limit=5,
         with_payload=True,
     ).points

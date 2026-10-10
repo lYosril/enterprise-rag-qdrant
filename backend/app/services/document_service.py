@@ -95,7 +95,7 @@ def index_document(
                     vector=embedding.tolist(),
                     payload={
                         "document_id": str(document.id),
-                        # Keep both keys for compatibility with older code/data.
+                        "owner_id": str(document.owner_id),
                         "document": document.filename,
                         "filename": document.filename,
                         "page": page_number,

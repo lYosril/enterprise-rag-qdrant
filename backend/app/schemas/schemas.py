@@ -32,3 +32,20 @@ class ChatResponse(BaseModel):
     conversation_id: UUID
     answer: str
     sources: list[SourceResponse]
+
+
+class ConversationResponse(BaseModel):
+    id: UUID
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class MessageResponse(BaseModel):
+    id: UUID
+    role: str
+    content: str
+    sources: list
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)

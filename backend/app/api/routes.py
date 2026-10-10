@@ -10,23 +10,27 @@ from fastapi import (
     Depends,
     File,
     HTTPException,
+    Query,
     UploadFile,
 )
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
+from app.api.auth import get_current_user
 from app.db.session import get_db
-from app.models.models import Document, Conversation, Message
+from app.models.models import Conversation, Document, Message, User
 from app.schemas.schemas import (
     ChatRequest,
     ChatResponse,
+    ConversationResponse,
     DocumentResponse,
+    MessageResponse,
     SourceResponse,
 )
 from app.services.document_service import (
     DOCUMENT_DIR,
-    index_document,
     delete_document_vectors,
+    index_document,
 )
 from app.services.rag_service import answer_question
 
@@ -41,6 +45,7 @@ router = APIRouter(prefix="/api/v1")
 def upload_document(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     if not file.filename or Path(file.filename).suffix.lower() != ".pdf":
         raise HTTPException(
@@ -59,6 +64,7 @@ def upload_document(
         stored_path=str(saved_path),
         status="processing",
         chunk_count=0,
+        owner_id=current_user.id,
     )
 
     try:
@@ -118,8 +124,15 @@ def upload_document(
     "/documents",
     response_model=list[DocumentResponse],
 )
-def list_documents(db: Session = Depends(get_db)):
-    statement = select(Document).order_by(Document.created_at.desc())
+def list_documents(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    statement = (
+        select(Document)
+        .where(Document.owner_id == current_user.id)
+        .order_by(Document.created_at.desc())
+    )
     return list(db.scalars(statement).all())
 
 
@@ -127,8 +140,14 @@ def list_documents(db: Session = Depends(get_db)):
 def remove_document(
     document_id: uuid.UUID,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    document = db.get(Document, document_id)
+    document = db.scalar(
+        select(Document).where(
+            Document.id == document_id,
+            Document.owner_id == current_user.id,
+        )
+    )
 
     if not document:
         raise HTTPException(
@@ -154,10 +173,61 @@ def remove_document(
     return {"message": "Document deleted successfully."}
 
 
+@router.get(
+    "/conversations",
+    response_model=list[ConversationResponse],
+)
+def list_conversations(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    statement = (
+        select(Conversation)
+        .where(Conversation.owner_id == current_user.id)
+        .order_by(Conversation.created_at.desc())
+    )
+    return list(db.scalars(statement).all())
+
+
+@router.get(
+    "/conversations/{conversation_id}/messages",
+    response_model=list[MessageResponse],
+)
+def list_conversation_messages(
+    conversation_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+):
+    conversation = db.scalar(
+        select(Conversation).where(
+            Conversation.id == conversation_id,
+            Conversation.owner_id == current_user.id,
+        )
+    )
+
+    if not conversation:
+        raise HTTPException(
+            status_code=404,
+            detail="Conversation not found.",
+        )
+
+    statement = (
+        select(Message)
+        .where(Message.conversation_id == conversation_id)
+        .order_by(Message.created_at.asc())
+        .offset(offset)
+        .limit(limit)
+    )
+    return list(db.scalars(statement).all())
+
+
 @router.post("/chat", response_model=ChatResponse)
 def chat(
     request: ChatRequest,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     question = request.question.strip()
 
@@ -168,9 +238,11 @@ def chat(
         )
 
     if request.conversation_id:
-        conversation = db.get(
-            Conversation,
-            request.conversation_id,
+        conversation = db.scalar(
+            select(Conversation).where(
+                Conversation.id == request.conversation_id,
+                Conversation.owner_id == current_user.id,
+            )
         )
 
         if not conversation:
@@ -179,28 +251,23 @@ def chat(
                 detail="Conversation not found.",
             )
     else:
-        conversation = Conversation()
+        conversation = Conversation(owner_id=current_user.id)
         db.add(conversation)
         db.commit()
         db.refresh(conversation)
-    
+
     try:
-        result = answer_question(question)
+        result = answer_question(
+            question,
+            owner_id=str(current_user.id),
+        )
     except Exception as exc:
         logger.exception("RAG chat request failed")
 
         raise HTTPException(
-        status_code=502,
-        detail="The RAG service failed to generate an answer.",
-    ) from exc
-
-    # try:
-    #     result = answer_question(question)
-    # except Exception as exc:
-    #     raise HTTPException(
-    #         status_code=502,
-    #         detail="The RAG service failed to generate an answer.",
-    #     ) from exc
+            status_code=502,
+            detail="The RAG service failed to generate an answer.",
+        ) from exc
 
     db.add_all([
         Message(

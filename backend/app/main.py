@@ -5,18 +5,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
+from app.api.auth import router as auth_router
 from app.api.routes import router
-from app.core.config import settings
-from app.db.session import Base, engine, SessionLocal
-from app.models.models import Document, Conversation, Message
+from app.db.session import SessionLocal, engine
 from app.services.document_service import ensure_collection
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Convenient for the local learning prototype.
-    # Use Alembic migrations in later production milestones.
-    Base.metadata.create_all(bind=engine)
     ensure_collection()
     yield
     engine.dispose()
@@ -31,6 +27,8 @@ app = FastAPI(
     version="0.2.0",
     lifespan=lifespan,
 )
+
+app.include_router(auth_router)
 
 # Restrict these origins to your actual frontend in production.
 app.add_middleware(

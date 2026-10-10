@@ -3,6 +3,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    jwt_secret_key: str
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
     database_url: str
     qdrant_url: str = "http://localhost:6333"
     qdrant_collection: str = "enterprise_documents"
@@ -20,6 +23,5 @@ class Settings(BaseSettings):
         env_file=".env",
         extra="ignore",
     )
-
 
 settings = Settings()
