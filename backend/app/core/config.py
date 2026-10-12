@@ -19,6 +19,15 @@ class Settings(BaseSettings):
     )
     llm_model: str
 
+    cross_encoder_model: str = (
+        "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    )
+    rag_dense_candidate_limit: int = 20
+    rag_lexical_candidate_limit: int = 20
+    rag_use_hybrid: bool = True
+    rag_use_rerank: bool = True
+    rrf_k: int = 60
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore",

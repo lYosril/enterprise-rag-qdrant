@@ -16,7 +16,7 @@ from sentence_transformers import SentenceTransformer
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.models.models import Document
+from app.models.models import Document, DocumentChunk
 
 
 DOCUMENT_DIR = Path("data/documents")
