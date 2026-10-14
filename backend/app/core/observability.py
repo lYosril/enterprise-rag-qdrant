@@ -1,8 +1,9 @@
 import logging
 import time
 from contextlib import contextmanager
+from typing import Any
 
-from prometheus_client import Counter, Histogram
+from prometheus_client import REGISTRY, Counter, Histogram
 
 logging.basicConfig(
     level=logging.INFO,
@@ -10,61 +11,87 @@ logging.basicConfig(
 )
 logger = logging.getLogger("enterprise_rag")
 
-CHAT_REQUESTS = Counter(
+
+def _get_or_create(metric_cls, name: str, documentation: str, **kwargs) -> Any:
+    """Return an existing registered metric or create a new one.
+
+    Prevents ``DuplicateTimeseries`` errors when the module is imported more
+    than once (e.g. during pytest collection with non-standard sys.path).
+    """
+    # prometheus_client stores collectors in _names_to_collectors keyed by name
+    existing = REGISTRY._names_to_collectors.get(name)
+    if existing is not None:
+        return existing
+    return metric_cls(name, documentation, **kwargs)
+
+
+CHAT_REQUESTS: Counter = _get_or_create(
+    Counter,
     "rag_chat_requests_total",
     "Total chat requests",
-    ["status"],
+    labelnames=["status"],
 )
-CHAT_LATENCY = Histogram(
+CHAT_LATENCY: Histogram = _get_or_create(
+    Histogram,
     "rag_chat_request_duration_seconds",
     "End-to-end chat request duration",
 )
-RETRIEVAL_LATENCY = Histogram(
+RETRIEVAL_LATENCY: Histogram = _get_or_create(
+    Histogram,
     "rag_retrieval_duration_seconds",
     "Qdrant retrieval duration",
 )
-RERANK_LATENCY = Histogram(
+RERANK_LATENCY: Histogram = _get_or_create(
+    Histogram,
     "rag_rerank_duration_seconds",
     "Cross-encoder reranking duration",
 )
-LLM_LATENCY = Histogram(
+LLM_LATENCY: Histogram = _get_or_create(
+    Histogram,
     "rag_llm_duration_seconds",
     "LLM request duration",
 )
-EMPTY_RETRIEVAL_TOTAL = Counter(
+EMPTY_RETRIEVAL_TOTAL: Counter = _get_or_create(
+    Counter,
     "rag_empty_retrieval_total",
     "Chat requests where retrieval returned no usable chunks",
 )
-LLM_TIMEOUT_TOTAL = Counter(
+LLM_TIMEOUT_TOTAL: Counter = _get_or_create(
+    Counter,
     "rag_llm_timeout_total",
     "LLM requests that timed out",
 )
-LLM_TOKENS_TOTAL = Counter(
+LLM_TOKENS_TOTAL: Counter = _get_or_create(
+    Counter,
     "rag_llm_tokens_total",
     "LLM token usage when reported by provider",
-    ["kind"],
+    labelnames=["kind"],
 )
-RETRIEVED_CHUNKS = Histogram(
+RETRIEVED_CHUNKS: Histogram = _get_or_create(
+    Histogram,
     "rag_retrieved_chunks_count",
     "Number of chunks passed to the LLM after retrieval/rerank",
     buckets=(0, 1, 2, 3, 4, 5, 10, 20),
 )
 
 # Agent-specific metrics (Milestone 6)
-AGENT_REQUESTS_TOTAL = Counter(
+AGENT_REQUESTS_TOTAL: Counter = _get_or_create(
+    Counter,
     "rag_agent_requests_total",
     "Total agent requests by status and outcome",
-    ["status", "outcome"],
+    labelnames=["status", "outcome"],
 )
-AGENT_RETRIEVAL_ATTEMPTS = Histogram(
+AGENT_RETRIEVAL_ATTEMPTS: Histogram = _get_or_create(
+    Histogram,
     "rag_agent_retrieval_attempts",
     "Number of retrieval attempts per request",
     buckets=(1, 2, 3),
 )
-AGENT_QUERY_REWRITES_TOTAL = Counter(
+AGENT_QUERY_REWRITES_TOTAL: Counter = _get_or_create(
+    Counter,
     "rag_agent_query_rewrites_total",
     "Total query rewrites performed",
-    ["outcome"],
+    labelnames=["outcome"],
 )
 
 

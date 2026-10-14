@@ -1,151 +1,53 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Paperclip, Plus, Send } from 'lucide-react'
+import { Plus, Send, Zap, Sparkles, MessageSquare, AlertCircle } from 'lucide-react'
 import {
-  fetchConversations,
-  fetchMessages,
-  sendChat,
-  type ConversationSummary,
-  type MessageResponse,
-  type SourceResponse,
-} from '../api/client'
-import SourceCard from '../components/SourceCard'
+  getConversations,
+  getConversationMessages,
+  sendQuestion,
+  streamQuestion,
+} from '../api/chat'
+import type { ConversationSummary, MessageResponse, SourceResponse } from '../types'
+import ChatMessage from '../components/ChatMessage'
+import SourceModal from '../components/SourceModal'
 import Spinner from '../components/Spinner'
 
-// ─── Types for optimistic messages ───────────────────────────────────────────
-
-interface LocalMessage {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  sources: SourceResponse[] | null
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
-// ─── Source section (collapsible) ─────────────────────────────────────────────
-
-function SourcesSection({ sources }: { sources: SourceResponse[] }) {
-  const [open, setOpen] = useState(false)
-  const [showAll, setShowAll] = useState(false)
-
-  const visible = showAll ? sources : sources.slice(0, 3)
-
-  return (
-    <div className="mt-2">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1 text-xs font-medium text-brand hover:text-brand-dark"
-      >
-        {open ? '▾' : '▸'} {sources.length} source{sources.length !== 1 ? 's' : ''}
-      </button>
-      {open && (
-        <div className="mt-2 space-y-2">
-          {visible.map((s, i) => (
-            <SourceCard key={`${s.document_id}-${i}`} source={s} />
-          ))}
-          {sources.length > 3 && (
-            <button
-              onClick={() => setShowAll((v) => !v)}
-              className="text-xs font-medium text-brand hover:text-brand-dark"
-            >
-              {showAll ? 'Show less' : `Show all ${sources.length}`}
-            </button>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
-
-// ─── Message bubble ───────────────────────────────────────────────────────────
-
-function MessageBubble({ msg }: { msg: LocalMessage }) {
-  if (msg.role === 'user') {
-    return (
-      <div className="flex justify-end">
-        <div className="max-w-[75%] rounded-2xl rounded-tr-sm bg-brand px-4 py-3 text-sm text-white shadow-sm">
-          {msg.content}
-        </div>
-      </div>
-    )
+  try {
+    return new Date(iso).toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  } catch {
+    return iso
   }
-
-  return (
-    <div className="flex justify-start">
-      <div className="max-w-[80%] rounded-2xl rounded-tl-sm bg-white px-4 py-3 shadow-sm">
-        <p className="whitespace-pre-wrap text-sm text-gray-800">{msg.content}</p>
-        {msg.sources && msg.sources.length > 0 && (
-          <SourcesSection sources={msg.sources} />
-        )}
-      </div>
-    </div>
-  )
 }
 
-// ─── Typing indicator ─────────────────────────────────────────────────────────
-
-function TypingIndicator() {
-  return (
-    <div className="flex justify-start">
-      <div className="flex items-center gap-1.5 rounded-2xl rounded-tl-sm bg-white px-4 py-3 shadow-sm">
-        {[0, 1, 2].map((i) => (
-          <span
-            key={i}
-            className="h-2 w-2 rounded-full bg-gray-300"
-            style={{ animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite` }}
-          />
-        ))}
-        <style>{`
-          @keyframes bounce {
-            0%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-6px); }
-          }
-        `}</style>
-      </div>
-    </div>
-  )
-}
-
-// ─── Main page ────────────────────────────────────────────────────────────────
-
-export default function ChatPage() {
+export const ChatPage: React.FC = () => {
   const [searchParams] = useSearchParams()
-
   const [conversations, setConversations] = useState<ConversationSummary[]>([])
   const [activeConvId, setActiveConvId] = useState<string | undefined>(
     searchParams.get('conv') ?? undefined,
   )
-  const [messages, setMessages] = useState<LocalMessage[]>([])
+  const [messages, setMessages] = useState<MessageResponse[]>([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
+  const [streamingEnabled, setStreamingEnabled] = useState(true)
+  const [selectedSource, setSelectedSource] = useState<SourceResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loadingMessages, setLoadingMessages] = useState(false)
 
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Load conversation list
   const loadConversations = useCallback(async () => {
     try {
-      const list = await fetchConversations()
-      setConversations(list)
+      const data = await getConversations()
+      setConversations(data)
     } catch {
-      // Non-critical — just leave the list empty
+      // Non-blocking
     }
   }, [])
 
@@ -153,42 +55,32 @@ export default function ChatPage() {
     void loadConversations()
   }, [loadConversations])
 
-  // Load messages when active conversation changes
   useEffect(() => {
     if (!activeConvId) {
       setMessages([])
       return
     }
     setLoadingMessages(true)
-    fetchMessages(activeConvId)
-      .then((msgs: MessageResponse[]) => {
-        setMessages(
-          msgs.map((m) => ({
-            id: m.id,
-            role: m.role,
-            content: m.content,
-            sources: m.sources,
-          })),
-        )
+    getConversationMessages(activeConvId)
+      .then((msgs) => setMessages(msgs))
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : 'Failed to load conversation messages'
+        setError(msg)
       })
-      .catch(() => setError('Failed to load messages.'))
       .finally(() => setLoadingMessages(false))
   }, [activeConvId])
 
-  // Auto-scroll to bottom
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, sending])
 
-  // Auto-resize textarea
-  function handleInputChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value)
-    const el = e.target
-    el.style.height = 'auto'
-    el.style.height = `${Math.min(el.scrollHeight, 96)}px` // max ~4 rows
+    e.target.style.height = 'auto'
+    e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`
   }
 
-  async function handleSend() {
+  const handleSend = async () => {
     const question = input.trim()
     if (!question || sending) return
 
@@ -198,167 +90,293 @@ export default function ChatPage() {
     }
     setError(null)
 
-    // Optimistic user message
-    const tempId = `local-${Date.now()}`
-    setMessages((prev) => [
-      ...prev,
-      { id: tempId, role: 'user', content: question, sources: null },
-    ])
+    const tempUserMsg: MessageResponse = {
+      id: `user-${Date.now()}`,
+      role: 'user',
+      content: question,
+      sources: null,
+      created_at: new Date().toISOString(),
+    }
+
+    setMessages((prev) => [...prev, tempUserMsg])
     setSending(true)
 
-    try {
-      const res = await sendChat(question, activeConvId)
-      setActiveConvId(res.conversation_id)
+    if (streamingEnabled) {
+      const tempAssistantId = `assistant-${Date.now()}`
+      let accumulated = ''
+
+      // Placeholder message for streaming tokens
       setMessages((prev) => [
         ...prev,
         {
-          id: `${res.conversation_id}-${Date.now()}`,
+          id: tempAssistantId,
           role: 'assistant',
-          content: res.answer,
-          sources: res.sources,
+          content: '',
+          sources: null,
+          created_at: new Date().toISOString(),
         },
       ])
-      await loadConversations()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send message.')
-      // Remove optimistic message on failure
-      setMessages((prev) => prev.filter((m) => m.id !== tempId))
-    } finally {
-      setSending(false)
+
+      await streamQuestion({
+        question,
+        conversation_id: activeConvId,
+        onToken: (token: string) => {
+          accumulated += token
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === tempAssistantId ? { ...m, content: accumulated } : m,
+            ),
+          )
+        },
+        onSources: (sources: SourceResponse[], conversationId: string) => {
+          setActiveConvId(conversationId)
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === tempAssistantId ? { ...m, sources } : m,
+            ),
+          )
+        },
+        onDone: () => {
+          setSending(false)
+          void loadConversations()
+        },
+        onError: (err: Error) => {
+          setError(err.message)
+          setSending(false)
+          setMessages((prev) => prev.filter((m) => m.id !== tempAssistantId))
+        },
+      })
+    } else {
+      // Non-streaming fallback
+      try {
+        const res = await sendQuestion({
+          question,
+          conversation_id: activeConvId,
+        })
+        setActiveConvId(res.conversation_id)
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `assistant-${Date.now()}`,
+            role: 'assistant',
+            content: res.answer,
+            sources: res.sources,
+            created_at: new Date().toISOString(),
+          },
+        ])
+        await loadConversations()
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Failed to generate answer'
+        setError(msg)
+        setMessages((prev) => prev.filter((m) => m.id !== tempUserMsg.id))
+      } finally {
+        setSending(false)
+      }
     }
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       void handleSend()
     }
   }
 
-  function startNewChat() {
+  const handleNewChat = () => {
     setActiveConvId(undefined)
     setMessages([])
     setError(null)
   }
 
   return (
-    <div className="flex h-full overflow-hidden">
-      {/* ── Conversation list ── */}
-      <div className="flex w-80 shrink-0 flex-col border-r border-gray-200 bg-white">
-        <div className="border-b border-gray-100 p-4">
+    <div className="flex h-full overflow-hidden bg-slate-50">
+      {/* ── Conversation Sidebar ── */}
+      <div className="flex w-72 shrink-0 flex-col border-r border-slate-200 bg-white">
+        <div className="border-b border-slate-100 p-4">
           <button
-            onClick={startNewChat}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-dark"
+            type="button"
+            onClick={handleNewChat}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:bg-emerald-700"
           >
-            <Plus size={16} />
-            New Chat
+            <Plus className="h-4 w-4" />
+            New Conversation
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto divide-y divide-slate-50">
           {conversations.length === 0 ? (
-            <p className="px-4 py-6 text-center text-sm text-gray-400">
-              No conversations yet
-            </p>
+            <div className="p-6 text-center text-xs text-slate-400">
+              <MessageSquare className="h-8 w-8 mx-auto text-slate-300 mb-2" />
+              No conversation history yet. Start by asking a question!
+            </div>
           ) : (
             conversations.map((conv) => (
               <button
+                type="button"
                 key={conv.id}
                 onClick={() => setActiveConvId(conv.id)}
-                className={`w-full border-b border-gray-50 px-4 py-3 text-left transition-colors hover:bg-gray-50 ${
-                  conv.id === activeConvId ? 'bg-brand-light' : ''
+                className={`w-full px-4 py-3 text-left transition-colors flex items-start gap-2.5 ${
+                  conv.id === activeConvId
+                    ? 'bg-emerald-50/70 border-l-4 border-emerald-600'
+                    : 'hover:bg-slate-50'
                 }`}
               >
-                <p
-                  className={`truncate text-sm font-medium ${
-                    conv.id === activeConvId ? 'text-brand' : 'text-gray-700'
+                <MessageSquare
+                  className={`h-4 w-4 mt-0.5 shrink-0 ${
+                    conv.id === activeConvId ? 'text-emerald-600' : 'text-slate-400'
                   }`}
-                >
-                  Conversation
-                </p>
-                <p className="mt-0.5 text-xs text-gray-400">
-                  {formatDate(conv.created_at)}
-                </p>
+                />
+                <div className="overflow-hidden flex-1">
+                  <p
+                    className={`text-xs font-semibold truncate ${
+                      conv.id === activeConvId ? 'text-emerald-900' : 'text-slate-700'
+                    }`}
+                  >
+                    Conversation {conv.id.slice(0, 8)}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    {formatDate(conv.created_at)}
+                  </p>
+                </div>
               </button>
             ))
           )}
         </div>
       </div>
 
-      {/* ── Chat area ── */}
+      {/* ── Main Chat Area ── */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Messages */}
+        {/* Chat Header */}
+        <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3.5">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-emerald-600" />
+            <h2 className="text-sm font-bold text-slate-800">
+              {activeConvId ? 'Grounded AI Chat' : 'New Q&A Session'}
+            </h2>
+          </div>
+
+          {/* Streaming toggle */}
+          <div className="flex items-center gap-2">
+            <label className="flex items-center gap-1.5 cursor-pointer text-xs text-slate-600 font-medium">
+              <Zap
+                className={`h-3.5 w-3.5 ${
+                  streamingEnabled ? 'text-amber-500 fill-amber-500' : 'text-slate-400'
+                }`}
+              />
+              <span>Stream tokens</span>
+              <input
+                type="checkbox"
+                checked={streamingEnabled}
+                onChange={(e) => setStreamingEnabled(e.target.checked)}
+                className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 h-3.5 w-3.5 ml-1"
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* Message Thread */}
         <div className="flex-1 overflow-y-auto px-6 py-6">
           {loadingMessages ? (
-            <div className="flex justify-center pt-12">
-              <Spinner size={28} className="text-brand" />
+            <div className="flex justify-center pt-20">
+              <Spinner size={32} className="text-emerald-600" />
             </div>
           ) : messages.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-light">
-                <span className="text-3xl">💬</span>
+            <div className="flex h-full flex-col items-center justify-center text-center max-w-md mx-auto">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 mb-4 shadow-xs">
+                <Sparkles className="h-7 w-7" />
               </div>
-              <p className="text-lg font-semibold text-gray-700">
-                Ask anything
+              <h3 className="text-base font-bold text-slate-800">Enterprise Knowledge Search</h3>
+              <p className="mt-1 text-xs text-slate-500 leading-relaxed">
+                Ask any question about your organization policies, handbook, or uploaded documentation. Answers include verifiable citations from authorized source passages.
               </p>
-              <p className="max-w-xs text-sm text-gray-400">
-                Type a question below and let the assistant search your documents
-                for the best answer.
-              </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-2">
+                {[
+                  'What is our vacation and leave policy?',
+                  'What are the requirements for computer monitoring?',
+                  'How does the company handle policy conflicts?',
+                ].map((sample) => (
+                  <button
+                    key={sample}
+                    type="button"
+                    onClick={() => {
+                      setInput(sample)
+                      textareaRef.current?.focus()
+                    }}
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 hover:border-emerald-300 hover:text-emerald-700 transition"
+                  >
+                    &ldquo;{sample}&rdquo;
+                  </button>
+                ))}
+              </div>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="max-w-4xl mx-auto space-y-4">
               {messages.map((msg) => (
-                <MessageBubble key={msg.id} msg={msg} />
+                <ChatMessage
+                  key={msg.id}
+                  message={msg}
+                  onSelectSource={(src) => setSelectedSource(src)}
+                />
               ))}
-              {sending && <TypingIndicator />}
-              <div ref={bottomRef} />
+              {sending && !streamingEnabled && (
+                <div className="flex items-center gap-2 text-xs text-slate-400 py-2">
+                  <Spinner size={14} className="text-emerald-600" />
+                  <span>Retrieving evidence and synthesizing answer...</span>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
             </div>
           )}
         </div>
 
-        {/* Error banner */}
+        {/* Error Alert */}
         {error && (
-          <div className="mx-6 mb-2 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">
-            {error}
+          <div className="mx-6 mb-2 flex items-center justify-between rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-xs text-red-700 animate-in fade-in">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0 text-red-500" />
+              <span>{error}</span>
+            </div>
             <button
+              type="button"
               onClick={() => setError(null)}
-              className="ml-2 font-medium underline"
+              className="font-bold underline hover:text-red-900"
             >
               Dismiss
             </button>
           </div>
         )}
 
-        {/* Input bar */}
-        <div className="border-t border-gray-200 bg-white px-6 py-4">
-          <div className="flex items-end gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 shadow-sm focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/20">
-            <button
-              type="button"
-              className="shrink-0 text-gray-400 hover:text-gray-600"
-              title="Attach file (coming soon)"
-            >
-              <Paperclip size={18} />
-            </button>
+        {/* Question Input Box */}
+        <div className="border-t border-slate-200 bg-white p-4">
+          <div className="max-w-4xl mx-auto flex items-end gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-emerald-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
             <textarea
               ref={textareaRef}
               rows={1}
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder="Ask a question… (Enter to send, Shift+Enter for new line)"
-              className="flex-1 resize-none bg-transparent text-sm outline-none placeholder:text-gray-400"
+              placeholder="Ask a question about your documents… (Enter to send, Shift+Enter for newline)"
+              className="flex-1 resize-none bg-transparent text-xs text-slate-800 placeholder:text-slate-400 focus:outline-hidden"
             />
             <button
+              type="button"
               onClick={() => void handleSend()}
               disabled={!input.trim() || sending}
-              className="shrink-0 flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white transition hover:bg-brand-dark disabled:opacity-40"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white transition hover:bg-emerald-700 disabled:opacity-40 shadow-xs"
             >
-              {sending ? <Spinner size={14} className="text-white" /> : <Send size={14} />}
+              {sending ? <Spinner size={14} className="text-white" /> : <Send className="h-4 w-4" />}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Source Citation Excerpt Modal */}
+      <SourceModal
+        source={selectedSource}
+        onClose={() => setSelectedSource(null)}
+      />
     </div>
   )
 }
+
+export default ChatPage

@@ -1,5 +1,4 @@
-
-name: CI
+name: CI Pipeline
 
 on:
   push:
@@ -8,26 +7,59 @@ on:
     branches: [main]
 
 jobs:
-  test-and-build:
+  backend-checks:
+    name: Backend Tests & Validation
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
-      - name: Install dependencies
+      - name: Install backend dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest
+          pip install pytest pytest-cov
 
-      - name: Run tests
-        run: pytest -v
+      - name: Run backend pytest test suite
+        run: |
+          pytest tests/ -v
 
-      - name: Build backend image
-        run: docker build -f backend/Dockerfile -t enterprise-rag-assistant .
+      - name: Build backend Docker image
+        run: |
+          docker build -f backend/Dockerfile -t enterprise-rag-backend:latest .
+
+  frontend-checks:
+    name: Frontend Tests & Production Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run frontend unit & component tests
+        run: npm test
+
+      - name: Run production build (typecheck + vite build)
+        run: npm run build
+
+      - name: Build frontend Docker image
+        run: |
+          docker build -t enterprise-rag-frontend:latest .

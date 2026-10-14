@@ -29,9 +29,14 @@ const CONFIG: Record<
     classes: 'bg-red-100 text-red-600',
     icon: <XCircle size={12} />,
   },
+  deleting: {
+    label: 'Deleting',
+    classes: 'bg-slate-100 text-slate-500',
+    icon: <Spinner size={12} className="text-slate-500" />,
+  },
 }
 
-export default function StatusBadge({ status }: StatusBadgeProps) {
+export function StatusBadge({ status }: StatusBadgeProps) {
   const cfg = CONFIG[status] ?? {
     label: status,
     classes: 'bg-gray-100 text-gray-500',
@@ -47,3 +52,5 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
     </span>
   )
 }
+
+export default StatusBadge

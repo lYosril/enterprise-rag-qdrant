@@ -1,23 +1,17 @@
 
 from collections import defaultdict
-import requests
+from time import perf_counter
+
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.core.observability import (
-    LLM_LATENCY,
-    LLM_TIMEOUT_TOTAL,
-    LLM_TOKENS_TOTAL,
-    RETRIEVED_CHUNKS,
-    logger,
-)
-from app.db.session import SessionLocal
-from app.services.retrieval_service import retrieve_ranked_chunks
-
 from app.core.logging_config import logger
 from app.core.metrics import RAG_RETRIEVED_CHUNKS
+from app.core.observability import RETRIEVED_CHUNKS
+from app.db.session import SessionLocal
 from app.services.llm_client import chat_completion
-from time import perf_counter
+from app.services.retrieval_service import retrieve_ranked_chunks
+
 
 def log_retrieval(question: str, source_count: int, elapsed_ms: float):
     logger.info(

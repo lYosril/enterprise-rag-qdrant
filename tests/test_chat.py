@@ -102,8 +102,6 @@ def test_continue_another_users_conversation_is_rejected(client, db):
     assert response.json()["detail"] == "Conversation not found."
     mocked_rag.assert_not_called()
 
-    assert messages_response.status_code == 404
-
 
 def test_chat_handles_llm_failure_with_502(client):
     register(client, "alice@example.com")
