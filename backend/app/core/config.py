@@ -28,6 +28,15 @@ class Settings(BaseSettings):
     rag_use_rerank: bool = True
     rrf_k: int = 60
 
+    # Agent controls & limits (Milestone 6)
+    rag_enable_agent: bool = True
+    agent_max_retrieval_attempts: int = 2
+    agent_retrieved_candidates_limit: int = 20
+    agent_final_top_k: int = 5
+    agent_llm_timeout_seconds: int = 45
+    agent_weak_retrieval_threshold: float = 0.5
+    agent_max_history_turns: int = 6
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore",

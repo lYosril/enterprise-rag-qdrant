@@ -1,0 +1,90 @@
+[
+  {
+    "id": "q1_direct_hiring",
+    "category": "single_document",
+    "question": "What is the equal employment and hiring policy of the company?",
+    "history": [],
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [4, 5],
+    "expected_facts": ["equal opportunity", "hiring", "at will"],
+    "is_answerable": true
+  },
+  {
+    "id": "q2_direct_monitoring",
+    "category": "single_document",
+    "question": "Does the company monitor computer usage and transmitted data?",
+    "history": [],
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [8, 9],
+    "expected_facts": ["monitor", "intercept", "transmitted"],
+    "is_answerable": true
+  },
+  {
+    "id": "q3_coref_deadline",
+    "category": "coreference_rewriting",
+    "question": "What happens if I miss the deadline?",
+    "history": [
+      {
+        "role": "user",
+        "content": "What is the policy for reporting workplace injuries and illness?"
+      },
+      {
+        "role": "assistant",
+        "content": "Injuries and illnesses must be reported immediately to the supervisor."
+      }
+    ],
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [3, 4],
+    "expected_facts": ["injury", "report", "supervisor"],
+    "is_answerable": true
+  },
+  {
+    "id": "q4_coref_vague_it",
+    "category": "coreference_rewriting",
+    "question": "What does the policy say about it?",
+    "history": [
+      {
+        "role": "user",
+        "content": "Can employees use personal cell phones during work hours?"
+      },
+      {
+        "role": "assistant",
+        "content": "The company has specific guidelines regarding cell phone and personal telephone usage."
+      }
+    ],
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [3],
+    "expected_facts": ["cell phone", "personal"],
+    "is_answerable": true
+  },
+  {
+    "id": "q5_multi_doc_compare",
+    "category": "multi_document_synthesis",
+    "question": "Compare the leave policy in the employee handbook with the leave policy in the updated HR guidelines. Identify differences and cite sources.",
+    "history": [],
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [2, 3],
+    "expected_facts": ["handbook", "leave"],
+    "is_answerable": true
+  },
+  {
+    "id": "q6_unanswerable_quantum",
+    "category": "unanswerable_abstention",
+    "question": "What is the company policy regarding quantum computing encryption keys and aerospace export controls?",
+    "history": [],
+    "expected_document": null,
+    "expected_pages": [],
+    "expected_facts": ["could not find", "sufficient evidence"],
+    "is_answerable": false
+  },
+  {
+    "id": "q7_unanswerable_stock",
+    "category": "unanswerable_abstention",
+    "question": "How many stock options are granted to interns in the 2030 fiscal year compensation plan?",
+    "history": [],
+    "expected_document": null,
+    "expected_pages": [],
+    "expected_facts": ["could not find", "sufficient evidence"],
+    "is_answerable": false
+  }
+]

@@ -16,7 +16,12 @@ from dataclasses import dataclass
 import requests
 
 from app.core.config import settings
-from app.core.observability import LLM_LATENCY, LLM_TIMEOUT_TOTAL, LLM_TOKENS_TOTAL
+from app.core.observability import (
+    AGENT_QUERY_REWRITES_TOTAL,
+    LLM_LATENCY,
+    LLM_TIMEOUT_TOTAL,
+    LLM_TOKENS_TOTAL,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -144,12 +149,14 @@ def rewrite_query(
         )
 
         if not rewritten or rewritten.lower() == question.lower():
+            AGENT_QUERY_REWRITES_TOTAL.labels(outcome="unchanged").inc()
             return RewriteResult(
                 query=question,
                 was_rewritten=False,
                 original=question,
             )
 
+        AGENT_QUERY_REWRITES_TOTAL.labels(outcome="rewritten").inc()
         logger.info(
             "Query rewrite: %r → %r",
             question[:80],
@@ -163,6 +170,7 @@ def rewrite_query(
 
     except requests.Timeout:
         LLM_TIMEOUT_TOTAL.inc()
+        AGENT_QUERY_REWRITES_TOTAL.labels(outcome="timeout").inc()
         logger.warning("Query rewriter timed out; using original question")
         return RewriteResult(
             query=question,
@@ -170,9 +178,45 @@ def rewrite_query(
             original=question,
         )
     except Exception:
+        AGENT_QUERY_REWRITES_TOTAL.labels(outcome="error").inc()
         logger.exception("Query rewriter failed; using original question")
         return RewriteResult(
             query=question,
             was_rewritten=False,
             original=question,
         )
+
+
+def is_retrieval_weak(
+    sources: list[dict],
+    threshold: float = 0.5,
+) -> bool:
+    """
+    Check if retrieval results are weak enough to justify a query rewrite retry.
+    A retrieval is weak if:
+    1. Zero sources were returned.
+    2. The top rerank/relevance score is below the configured threshold.
+    """
+    if not sources:
+        return True
+    top_score = max(
+        float(s.get("rerank_score", s.get("score", 0.0)))
+        for s in sources
+    )
+    return top_score < threshold
+
+
+def has_reference_tokens(question: str) -> bool:
+    """
+    Check if a question likely contains pronouns or referential phrases
+    pointing to prior conversation history (e.g., 'it', 'that', 'the policy', 'the deadline').
+    """
+    q_lower = f" {question.lower()} "
+    referential_terms = [
+        " it ", " this ", " that ", " these ", " those ", " them ",
+        " the policy ", " the previous ", " earlier ", " mentioned ",
+        " what about ", " how about ", " what happens if i ",
+        " compare that ", " explain that ", " the deadline ",
+    ]
+    return any(term in q_lower for term in referential_terms)
+

@@ -9,7 +9,9 @@ from app.api.auth import router as auth_router
 from app.api.routes import router
 from app.db.session import SessionLocal, engine
 from app.services.document_service import ensure_collection
+from app.core.logging_config import configure_logging
 
+configure_logging()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -52,4 +54,7 @@ def health():
     }
 
 
+from prometheus_client import make_asgi_app
+
 app.include_router(router)
+app.mount("/metrics", make_asgi_app())

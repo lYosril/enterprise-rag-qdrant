@@ -31,10 +31,16 @@ class Document(Base):
         String(1000), nullable=False
     )
     status: Mapped[str] = mapped_column(
-        String(30), default="processing", nullable=False
+        String(30), default="uploaded", nullable=False
     )
     chunk_count: Mapped[int] = mapped_column(
         Integer, default=0, nullable=False
+    )
+    error_message: Mapped[str | None] = mapped_column(
+        Text, nullable=True
+    )
+    version: Mapped[int] = mapped_column(
+        Integer, default=1, nullable=False
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

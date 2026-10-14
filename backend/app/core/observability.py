@@ -50,6 +50,46 @@ RETRIEVED_CHUNKS = Histogram(
     buckets=(0, 1, 2, 3, 4, 5, 10, 20),
 )
 
+# Agent-specific metrics (Milestone 6)
+AGENT_REQUESTS_TOTAL = Counter(
+    "rag_agent_requests_total",
+    "Total agent requests by status and outcome",
+    ["status", "outcome"],
+)
+AGENT_RETRIEVAL_ATTEMPTS = Histogram(
+    "rag_agent_retrieval_attempts",
+    "Number of retrieval attempts per request",
+    buckets=(1, 2, 3),
+)
+AGENT_QUERY_REWRITES_TOTAL = Counter(
+    "rag_agent_query_rewrites_total",
+    "Total query rewrites performed",
+    ["outcome"],
+)
+
+
+def log_agent_turn(
+    query_id: str,
+    attempt_count: int,
+    selected_source_ids: list[str],
+    latency_seconds: float,
+    outcome: str,
+    token_usage: dict | None = None,
+) -> None:
+    """
+    Structured logging of agent execution without leaking sensitive document
+    content, user secrets, or authentication tokens.
+    """
+    logger.info(
+        "AGENT_TURN query_id=%s attempts=%d sources=%s latency=%.3fs outcome=%s tokens=%s",
+        query_id,
+        attempt_count,
+        selected_source_ids,
+        latency_seconds,
+        outcome,
+        token_usage or {},
+    )
+
 
 class Timer:
     """Wall-clock timer for structured logs and optional Prometheus histograms."""

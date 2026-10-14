@@ -1,0 +1,56 @@
+[
+  {
+    "id": "eval_001",
+    "question": "What is the equal employment and hiring policy of the company?",
+    "expected_answer": "The Company is an equal opportunity employer and employment is on an at-will basis.",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [4, 5],
+    "expected_facts": ["equal opportunity", "at will", "hiring"],
+    "is_answerable": true
+  },
+  {
+    "id": "eval_002",
+    "question": "Does the company monitor computer usage and transmitted data?",
+    "expected_answer": "The Company reserves the right to monitor, intercept, and review all data transmitted, received, or stored on the System.",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [8],
+    "expected_facts": ["monitor", "intercept", "transmitted"],
+    "is_answerable": true
+  },
+  {
+    "id": "eval_003",
+    "question": "How are outside files and downloaded internet files scanned for viruses?",
+    "expected_answer": "Files obtained from sources outside the Company, including disks brought from home or downloaded from the Internet, must be checked with virus detection software.",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [9],
+    "expected_facts": ["virus detection", "internet", "outside"],
+    "is_answerable": true
+  },
+  {
+    "id": "eval_004",
+    "question": "How does the handbook define an individual with a disability?",
+    "expected_answer": "A person who has a physical or mental impairment that substantially limits one or more major life activities.",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [7],
+    "expected_facts": ["physical or mental impairment", "major life activities"],
+    "is_answerable": true
+  },
+  {
+    "id": "eval_005",
+    "question": "What is the company policy on quantum computing encryption keys and aerospace export control?",
+    "expected_answer": "The assistant should state that the provided documents do not contain information on quantum encryption keys or aerospace export controls.",
+    "expected_document": null,
+    "expected_pages": [],
+    "expected_facts": ["could not find", "sufficient evidence"],
+    "is_answerable": false
+  },
+  {
+    "id": "eval_006",
+    "question": "How many stock options are granted to interns in the 2030 fiscal year compensation plan?",
+    "expected_answer": "The assistant should state that the documents do not provide information on 2030 stock option compensation.",
+    "expected_document": null,
+    "expected_pages": [],
+    "expected_facts": ["could not find", "sufficient evidence"],
+    "is_answerable": false
+  }
+]

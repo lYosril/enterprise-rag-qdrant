@@ -1,0 +1,199 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "System Overview & SLA",
+      "type": "row"
+    },
+    {
+      "title": "RAG Request Latency (P50 / P95 / P99)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 1 },
+      "id": 1,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(rag_request_duration_seconds_bucket[5m])) by (le)) * 1000",
+          "legendFormat": "P50 Latency (ms)",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(rag_request_duration_seconds_bucket[5m])) by (le)) * 1000",
+          "legendFormat": "P95 Latency (ms)",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(rag_request_duration_seconds_bucket[5m])) by (le)) * 1000",
+          "legendFormat": "P99 Latency (ms)",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        }
+      }
+    },
+    {
+      "title": "RAG Request Throughput & Error Rate",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 1 },
+      "id": 2,
+      "targets": [
+        {
+          "expr": "sum(rate(rag_requests_total{status='success'}[5m]))",
+          "legendFormat": "Success req/sec",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(rag_requests_total{status='error'}[5m]))",
+          "legendFormat": "Error req/sec",
+          "refId": "B"
+        },
+        {
+          "expr": "(sum(rate(rag_requests_total{status='error'}[5m])) / sum(rate(rag_requests_total[5m]))) * 100",
+          "legendFormat": "Error Rate (%)",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 },
+      "id": 200,
+      "title": "Subsystem Latency Breakdown (Retrieval vs. Rerank vs. LLM)",
+      "type": "row"
+    },
+    {
+      "title": "Subsystem P95 Latencies",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 10 },
+      "id": 3,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(rag_retrieval_duration_seconds_bucket[5m])) by (le)) * 1000",
+          "legendFormat": "Retrieval P95 (ms)",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(rag_rerank_duration_seconds_bucket[5m])) by (le)) * 1000",
+          "legendFormat": "Reranking P95 (ms)",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(rag_llm_duration_seconds_bucket[5m])) by (le)) * 1000",
+          "legendFormat": "LLM Generation P95 (ms)",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        }
+      }
+    },
+    {
+      "title": "Retrieved Chunks Distribution",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 10 },
+      "id": 4,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(rag_retrieved_chunks_bucket[5m])) by (le))",
+          "legendFormat": "Median Chunks",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(rag_empty_retrieval_total[5m]))",
+          "legendFormat": "Zero Chunks Empty Retrieval / sec",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 18 },
+      "id": 300,
+      "title": "Agentic Controls & LLM Observability",
+      "type": "row"
+    },
+    {
+      "title": "Agent Retrieval Attempts & Rewrites",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 19 },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "sum(rate(rag_agent_retrieval_attempts_count[5m]))",
+          "legendFormat": "Total Agent Turns",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(rag_agent_query_rewrites_total[5m])) by (outcome)",
+          "legendFormat": "Query Rewrites ({{outcome}})",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "title": "LLM Token Consumption Rate",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 19 },
+      "id": 6,
+      "targets": [
+        {
+          "expr": "sum(rate(rag_llm_tokens_total{kind='prompt'}[5m]))",
+          "legendFormat": "Prompt Tokens / sec",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(rag_llm_tokens_total{kind='completion'}[5m]))",
+          "legendFormat": "Completion Tokens / sec",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "title": "LLM Error & Timeout Events",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 19 },
+      "id": 7,
+      "targets": [
+        {
+          "expr": "sum(rate(rag_llm_errors_total[5m]))",
+          "legendFormat": "LLM Request Errors / sec",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(rag_llm_timeout_total[5m]))",
+          "legendFormat": "LLM Timeouts / sec",
+          "refId": "B"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["rag", "ai", "observability", "prometheus"],
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "title": "Enterprise RAG Assistant - System Health",
+  "version": 1
+}

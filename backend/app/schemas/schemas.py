@@ -10,6 +10,7 @@ class DocumentResponse(BaseModel):
     filename: str
     status: str
     chunk_count: int
+    error_message: str | None = None
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
@@ -32,6 +33,7 @@ class ChatResponse(BaseModel):
     conversation_id: UUID
     answer: str
     sources: list[SourceResponse]
+    agent_trace: list[dict] | None = None
 
 
 class ConversationResponse(BaseModel):

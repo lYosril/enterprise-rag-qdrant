@@ -102,8 +102,19 @@ def test_continue_another_users_conversation_is_rejected(client, db):
     assert response.json()["detail"] == "Conversation not found."
     mocked_rag.assert_not_called()
 
-    messages_response = client.get(
-        f"/api/v1/conversations/{bob_conversation.id}/messages",
-        headers=auth_headers(alice_token),
-    )
     assert messages_response.status_code == 404
+
+
+def test_chat_handles_llm_failure_with_502(client):
+    register(client, "alice@example.com")
+    token = token_for(client, "alice@example.com")
+
+    with patch("app.api.routes.answer_question", side_effect=RuntimeError("LLM API connection failed")):
+        response = client.post(
+            "/api/v1/chat",
+            headers=auth_headers(token),
+            json={"question": "What is the policy?"},
+        )
+
+    assert response.status_code == 502
+    assert "failed to generate an answer" in response.json()["detail"].lower()

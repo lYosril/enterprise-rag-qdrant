@@ -52,3 +52,50 @@ def test_delete_other_users_document_returns_404(client, db):
         headers=auth_headers(token_for(client, "bob@example.com")),
     )
     assert len(remaining.json()) == 1
+
+
+def test_upload_empty_pdf_returns_400(client, db):
+    register(client, "alice@example.com")
+    token = token_for(client, "alice@example.com")
+
+    response = client.post(
+        "/api/v1/documents/upload",
+        headers=auth_headers(token),
+        files={"file": ("empty.pdf", b"", "application/pdf")},
+    )
+    assert response.status_code == 400
+    assert "empty" in response.json()["detail"].lower()
+
+
+def test_upload_non_pdf_file_returns_400(client, db):
+    register(client, "alice@example.com")
+    token = token_for(client, "alice@example.com")
+
+    response = client.post(
+        "/api/v1/documents/upload",
+        headers=auth_headers(token),
+        files={"file": ("script.sh", b"echo hi", "application/x-sh")},
+    )
+    assert response.status_code == 400
+    assert "pdf" in response.json()["detail"].lower()
+
+
+def test_retry_document_indexing(client, db):
+    register(client, "alice@example.com")
+    alice = user_by_email(db, "alice@example.com")
+    doc = create_document_for_user(db, alice, filename="failed.pdf")
+    doc.status = "failed"
+    doc.error_message = "Temporary failure"
+    db.commit()
+
+    token = token_for(client, "alice@example.com")
+    with patch("app.api.routes.index_document_task.delay"), \
+         patch("app.api.routes.index_document"):
+        response = client.post(
+            f"/api/v1/documents/{doc.id}/retry",
+            headers=auth_headers(token),
+        )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "processing"
+
