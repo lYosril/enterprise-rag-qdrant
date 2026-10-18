@@ -1,0 +1,712 @@
+[
+  {
+    "id": "sp_equal_employment",
+    "category": "single_passage",
+    "question": "What is the company's equal employment policy?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [5],
+    "expected_answer": "The Company is an equal opportunity employer and grants equal employment opportunities without regard to race, religion, color, national origin, sex, sexual orientation, pregnancy, age, veteran status, disability, or other protected classification.",
+    "expected_facts": ["equal opportunity", "race", "religion"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_at_will",
+    "category": "single_passage",
+    "question": "On what basis can my employment be terminated?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [4],
+    "expected_answer": "Employment is on an at-will basis and may be terminated by the Company or the employee at any time for any reason.",
+    "expected_facts": ["at will", "terminated", "any reason"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_anti_nepotism",
+    "category": "single_passage",
+    "question": "Can a relative supervise another relative or work in the same department?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [5],
+    "expected_answer": "No. Under the anti-nepotism policy no relative may supervise a relative, work in the same department as a relative, or exert influence over a relative's hiring, salary, or promotion.",
+    "expected_facts": ["relative", "supervise", "same department"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_background_check",
+    "category": "single_passage",
+    "question": "What does the employee background investigation include?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [6],
+    "expected_answer": "The background investigation may include criminal history, a Social Security number trace, past employment verification, and credit score.",
+    "expected_facts": ["criminal history", "social security", "employment verification"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_drug_test_offer",
+    "category": "single_passage",
+    "question": "When will a prospective employee be asked to submit to drug and alcohol testing?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [6],
+    "expected_answer": "Only after an offer of employment has been made, and the offer is conditioned on the candidate testing negative for drugs and alcohol; this applies to high-risk or safety-sensitive positions.",
+    "expected_facts": ["offer", "negative", "safety-sensitive"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_disability_definition",
+    "category": "single_passage",
+    "question": "How does the handbook define an individual with a disability?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [7],
+    "expected_answer": "A person who has a physical or mental impairment that substantially limits one or more major life activities, has a record of such impairment, or is regarded as having such an impairment.",
+    "expected_facts": ["physical or mental impairment", "major life activities"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_reasonable_accommodation",
+    "category": "single_passage",
+    "question": "What should I do if I need a reasonable accommodation under the ADA?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [7],
+    "expected_answer": "You should immediately notify the Company so that a reasonable accommodation can be considered unless it would create an undue hardship.",
+    "expected_facts": ["notify", "reasonable accommodation", "undue hardship"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_monitoring",
+    "category": "single_passage",
+    "question": "Does the company monitor computer usage and transmitted data?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [8],
+    "expected_answer": "Yes. The Company reserves the right to monitor, intercept, and review all data transmitted, received, or downloaded over the System, periodically and without prior notice or consent.",
+    "expected_facts": ["monitor", "intercept", "transmitted"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_privacy_expectation",
+    "category": "single_passage",
+    "question": "Do employees have a right to privacy for data stored on the company system?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [8],
+    "expected_answer": "No. No one can have a right or expectation of privacy regarding the receipt, transmission, or storage of data on the Company's Internet System.",
+    "expected_facts": ["expectation of privacy", "storage", "internet system"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_virus_detection",
+    "category": "single_passage",
+    "question": "How should outside files and downloaded internet files be handled to prevent viruses?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [9],
+    "expected_answer": "Files from outside the Company, including home disks and Internet downloads, must first be scanned with company-approved virus checking software; suspected viruses should be reported to the Help Desk immediately.",
+    "expected_facts": ["virus checking software", "scan", "help desk"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_spamming",
+    "category": "single_passage",
+    "question": "May employees send unsolicited email to people they do not know?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [9],
+    "expected_answer": "No. Without the express permission of their supervisors, employees may not send unsolicited email to persons with whom they do not have a prior relationship.",
+    "expected_facts": ["unsolicited", "supervisor", "prior relationship"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_email_property",
+    "category": "single_passage",
+    "question": "Who owns the email accounts on the company's email system?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [10],
+    "expected_answer": "All email accounts maintained on the Company's email systems are the property of the Company, which has the right to read and keep a record of emails.",
+    "expected_facts": ["property of the company", "read", "record"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_email_signature",
+    "category": "single_passage",
+    "question": "What must an email signature include?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [12],
+    "expected_answer": "Signatures must include your name, job title, and company name, with a disclaimer added underneath.",
+    "expected_facts": ["name", "job title", "company name"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_confidential_info",
+    "category": "single_passage",
+    "question": "What kinds of information are considered confidential and must not be emailed outside the company?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [13],
+    "expected_answer": "Confidential information includes client lists, credit card numbers, Social Security numbers, employee performance reviews, salary details, trade secrets, and passwords.",
+    "expected_facts": ["credit card numbers", "social security numbers", "salary"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_social_media_disclosure",
+    "category": "single_passage",
+    "question": "What must I disclose when posting about a client or receiving a free product to review?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [15],
+    "expected_answer": "You must disclose your relationship to the other party, and you must disclose when you receive a product or service to review for free; you must not discuss an organization or product in exchange for money.",
+    "expected_facts": ["disclose", "relationship", "free"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_harassment_forms",
+    "category": "single_passage",
+    "question": "What forms can harassment take according to the handbook?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [16],
+    "expected_answer": "Harassment may include words, signs, jokes, pranks, intimidation, physical contact, or violence, and it does not have to be sexual in nature.",
+    "expected_facts": ["jokes", "intimidation", "violence"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_retaliation",
+    "category": "single_passage",
+    "question": "Can the company retaliate against someone who reports harassment?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [17],
+    "expected_answer": "No. The Company, or any director, officer, or employee may not retaliate against a victim or witness who reports a violation of the Harassment Policy.",
+    "expected_facts": ["retaliate", "witness", "reports"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_exempt_status",
+    "category": "single_passage",
+    "question": "Are exempt employees entitled to overtime pay?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [17],
+    "expected_answer": "No. Exempt employees are not subject to the minimum wage and overtime laws, while nonexempt employees are entitled to at least minimum wage and overtime premiums.",
+    "expected_facts": ["exempt", "overtime", "minimum wage"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_full_time_hours",
+    "category": "single_passage",
+    "question": "How many hours per week are regular full-time employees scheduled to work?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [17],
+    "expected_answer": "Regular full-time employees are scheduled for 40 hours per week and are eligible for all Company benefits.",
+    "expected_facts": ["40 hours", "benefits"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_performance_review",
+    "category": "single_passage",
+    "question": "How often are formal performance evaluations conducted and by whom?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [18],
+    "expected_answer": "At least once a year, on the anniversary of the month of hire, the immediate supervisor conducts a formal performance evaluation.",
+    "expected_facts": ["once a year", "anniversary", "supervisor"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_promotion",
+    "category": "single_passage",
+    "question": "What is the company's policy on filling vacant positions?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [18],
+    "expected_answer": "It is the Company's policy to promote employees from within the Company, insofar as possible, for all jobs in which vacancies arise.",
+    "expected_facts": ["promote", "within", "vacancies"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_insurance_cost",
+    "category": "single_passage",
+    "question": "How is the monthly cost of the family health plan calculated?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [19],
+    "expected_answer": "The cost of a family plan is the cost of the single person plan plus $330.72 per month, and the single person plan cost plus $245.68 per month is referenced for other coverage.",
+    "expected_facts": ["family plan", "330.72"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_cobra_duration",
+    "category": "single_passage",
+    "question": "How long can COBRA coverage generally last after termination of employment?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [22],
+    "expected_answer": "When the qualifying event is the end of employment or reduction of hours, COBRA coverage under the Medical, Dental, and Vision components generally lasts up to 18 months.",
+    "expected_facts": ["18 months", "cobra"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_cobra_notice",
+    "category": "single_passage",
+    "question": "Within how many days must I notify the plan of a divorce for COBRA coverage?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [21],
+    "expected_answer": "For divorce or legal separation, a COBRA election is available only if you notify Laurie Green in writing within 60 days.",
+    "expected_facts": ["60 days", "divorce", "writing"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_disability_extension",
+    "category": "single_passage",
+    "question": "How much additional COBRA coverage is available under the disability extension?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [23],
+    "expected_answer": "All qualified beneficiaries in the family may be entitled to up to an additional 11 months of COBRA coverage under the disability extension.",
+    "expected_facts": ["additional 11 months", "disability"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_workers_comp",
+    "category": "single_passage",
+    "question": "What must I do if I am injured on the job under workers' compensation?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [27],
+    "expected_answer": "All injuries must be reported immediately and in person to your supervisor so proper medical attention and government reports can be handled.",
+    "expected_facts": ["immediately", "in person", "supervisor"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_group_life",
+    "category": "single_passage",
+    "question": "Does the company offer group life insurance benefits?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [27],
+    "expected_answer": "The Company does not currently offer Group Life Insurance benefits.",
+    "expected_facts": ["does not currently offer", "group life"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_funeral_leave",
+    "category": "single_passage",
+    "question": "When are full-time employees eligible for funeral leave?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [27],
+    "expected_answer": "Regular full-time employees are eligible for funeral leave without pay beginning their first full day of employment.",
+    "expected_facts": ["funeral leave", "without pay", "full-time"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_personal_leave",
+    "category": "single_passage",
+    "question": "What is the maximum length of personal leave and how is it requested?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [28],
+    "expected_answer": "Personal leave is unpaid, for a specified period not to exceed 3 days, and requires a written request to Lauri Greene stating the reasons.",
+    "expected_facts": ["3 days", "written request", "unpaid"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_medical_leave",
+    "category": "single_passage",
+    "question": "What documentation is required to be granted medical leave?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [28],
+    "expected_answer": "To be granted medical leave you must submit a statement from your physician setting forth the nature and extent of the disability and the expected return-to-work date.",
+    "expected_facts": ["physician", "disability", "return to work"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_lunch_period",
+    "category": "single_passage",
+    "question": "What meal period is provided to nonexempt employees working more than five hours?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [28],
+    "expected_answer": "Nonexempt employees scheduled to work more than five hours in a workday are provided a 30-minute unpaid, duty-free meal period.",
+    "expected_facts": ["30-minute", "meal period", "unpaid"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_sick_accrual",
+    "category": "single_passage",
+    "question": "At what rate do employees accrue paid sick time?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [29],
+    "expected_answer": "All employees begin accruing one hour of paid sick time for every 30 hours worked.",
+    "expected_facts": ["one hour", "30 hours"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_sick_waiting",
+    "category": "single_passage",
+    "question": "Is there a waiting period before accrued sick time can be used?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [29],
+    "expected_answer": "Yes. Use of accrued paid sick time is subject to an initial 120-day waiting period after the date employment commences.",
+    "expected_facts": ["120-day", "waiting period"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_sick_cap",
+    "category": "single_passage",
+    "question": "How much accrued sick time can be used per year?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [29],
+    "expected_answer": "Once accrued, an employee can use up to 72 hours of sick time each year.",
+    "expected_facts": ["72 hours", "year"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_bulletin_board",
+    "category": "single_passage",
+    "question": "Who may use the company bulletin board?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [29],
+    "expected_answer": "The bulletin board is reserved for management's exclusive use; employees may not post notices or materials on it.",
+    "expected_facts": ["management", "exclusive use", "may not post"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_visitors",
+    "category": "single_passage",
+    "question": "Can employees have visitors during working hours?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [31],
+    "expected_answer": "As a general rule employees should not have visitors during working hours; visitors are not allowed without special permission from management and must register at the reception desk.",
+    "expected_facts": ["visitors", "permission", "reception"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_solicitation",
+    "category": "single_passage",
+    "question": "May employees solicit or distribute literature during working time?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [31],
+    "expected_answer": "No. Employees may not solicit during working time in work areas or distribute literature during working time or in working areas.",
+    "expected_facts": ["solicit", "working time", "distribute"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_substance_abuse",
+    "category": "single_passage",
+    "question": "May an employee consume alcohol on company property?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [32],
+    "expected_answer": "No. No employee is allowed to consume, possess, or purchase any alcoholic beverage on any property owned by the Company.",
+    "expected_facts": ["alcohol", "property", "not allowed"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_cell_phone_desk",
+    "category": "single_passage",
+    "question": "What happens to a desk clerk who does not answer a hotel phone by the second ring because they are on their cell phone?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [33],
+    "expected_answer": "The desk clerk will be fired immediately.",
+    "expected_facts": ["fired immediately", "second ring"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_housing_cost",
+    "category": "single_passage",
+    "question": "How much is deducted each week for double-occupancy employee housing?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [33],
+    "expected_answer": "There is a $75 per week voluntary deduction for each week an employee resides in employee housing with double occupancy.",
+    "expected_facts": ["75", "per week", "double occupancy"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_housing_months",
+    "category": "single_passage",
+    "question": "During which months is employee housing available?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [33],
+    "expected_answer": "Employee housing is only available from May through October and is winterized for the other six months.",
+    "expected_facts": ["May", "October"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_gratuities",
+    "category": "single_passage",
+    "question": "May employees accept gifts or free meals from business-related sources?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [34],
+    "expected_answer": "No. Employees may not accept gifts from business-related sources, including free meals.",
+    "expected_facts": ["gifts", "free meals", "business-related"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_safety_equipment",
+    "category": "single_passage",
+    "question": "What safety equipment must employees working with machinery wear?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [34],
+    "expected_answer": "All employees working with machinery must wear gloves, respirators, safety glasses, and appropriate work shoes, provided at the Company's expense.",
+    "expected_facts": ["gloves", "respirators", "safety glasses"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_voluntary_termination",
+    "category": "single_passage",
+    "question": "What notice should I give if I decide to leave the company?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [35],
+    "expected_answer": "You should provide two weeks' written notice of your intention to quit; failure to do so results in ineligibility for re-hire.",
+    "expected_facts": ["two weeks", "written notice", "re-hire"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_sleeping_shift",
+    "category": "single_passage",
+    "question": "Is an employee allowed to sleep during an overnight shift?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [36],
+    "expected_answer": "No. No employee is allowed to sleep on their shift, even on an overnight shift such as a night audit position.",
+    "expected_facts": ["sleep", "shift", "night audit"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_breakfast_line",
+    "category": "single_passage",
+    "question": "Are employees allowed to eat at the hotel breakfast line?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [36],
+    "expected_answer": "No. No employees are allowed to eat at the hotel breakfast line at any time, and breakfast attendants may not give permission for it.",
+    "expected_facts": ["breakfast line", "not allowed"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_theft_reporting",
+    "category": "single_passage",
+    "question": "What happens if an employee witnesses a theft and does not report it?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [36],
+    "expected_answer": "An employee who witnesses a theft and does not report it immediately may be prosecuted along with the person taking the item.",
+    "expected_facts": ["witnessed", "report", "prosecuted"],
+    "is_answerable": true
+  },
+  {
+    "id": "sp_hr_contact",
+    "category": "single_passage",
+    "question": "How can I contact the HR manager regarding the email policy?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [14],
+    "expected_answer": "You can contact Laurie Green by phone at 231-436-5005 or by email at laurie@mackinaw-city.com.",
+    "expected_facts": ["Laurie Green", "231-436-5005", "laurie@mackinaw-city.com"],
+    "is_answerable": true
+  },
+  {
+    "id": "mp_part_time_benefits",
+    "category": "multi_passage",
+    "question": "If I am a regular part-time employee, how is my schedule defined and am I eligible for company benefits?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [17],
+    "expected_answer": "Regular part-time employees are regularly scheduled for less than 40 hours per week and are not eligible for Company benefits except as expressly described; those working on average under 1,560 hours per year are considered part-time.",
+    "expected_facts": ["less than 40 hours", "not eligible", "1,560"],
+    "is_answerable": true
+  },
+  {
+    "id": "mp_cobra_divorce_where",
+    "category": "multi_passage",
+    "question": "After a divorce, within what timeframe must I notify the plan for COBRA and where must the written notice be sent?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [21, 26],
+    "expected_answer": "You must notify Laurie Green in writing within 60 days of the qualifying event, and the written notice on the Plan's required form must be mailed or hand delivered to the Human Resources Manager at 706 Huron Street, Mackinaw City, MI 49701.",
+    "expected_facts": ["60 days", "706 Huron Street", "Mackinaw City"],
+    "is_answerable": true
+  },
+  {
+    "id": "mp_sick_notice_accrual",
+    "category": "multi_passage",
+    "question": "How does an employee accrue sick time and how much notice is required to use it?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [29],
+    "expected_answer": "Employees accrue one hour of paid sick time for every 30 hours worked, and it is company policy to require at least 72 hours' notice of an absence (or seven days if foreseeable).",
+    "expected_facts": ["one hour", "30 hours", "72 hours"],
+    "is_answerable": true
+  },
+  {
+    "id": "mp_injury_safety",
+    "category": "multi_passage",
+    "question": "What should I do if I am injured on the job, and what protective equipment is required when working with machinery?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [27, 34],
+    "expected_answer": "Injuries must be reported immediately and in person to your supervisor, and employees working with machinery must wear gloves, respirators, safety glasses, and appropriate work shoes.",
+    "expected_facts": ["supervisor", "safety glasses", "gloves"],
+    "is_answerable": true
+  },
+  {
+    "id": "mp_leave_types",
+    "category": "multi_passage",
+    "question": "What types of leave of absence does the company offer and which of them are unpaid?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [28],
+    "expected_answer": "The leave of absence program includes military leave, personal leave, and medical leave, and these leaves (including personal and medical leave) are unpaid; FMLA leave is also unpaid.",
+    "expected_facts": ["military", "personal", "medical"],
+    "is_answerable": true
+  },
+  {
+    "id": "mp_email_confidential",
+    "category": "multi_passage",
+    "question": "How does the company treat confidential information sent by email and what examples of confidential information are given?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [13],
+    "expected_answer": "Users are prohibited from transmitting confidential information to outside parties unless authorized; confidential information includes client lists, credit card numbers, Social Security numbers, performance reviews, salary details, trade secrets, and passwords.",
+    "expected_facts": ["confidential", "credit card numbers", "passwords"],
+    "is_answerable": true
+  },
+  {
+    "id": "mp_benefits_continuation",
+    "category": "multi_passage",
+    "question": "What is the relationship between the company health insurance plan and COBRA continuation coverage?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [19, 22],
+    "expected_answer": "COBRA provides a temporary continuation of the group health plan (Medical, Dental, Vision, and Health FSA components) when coverage would otherwise end, generally lasting up to 18 months after termination of employment.",
+    "expected_facts": ["cobra", "health", "18 months"],
+    "is_answerable": true
+  },
+  {
+    "id": "mp_cell_personal_phone",
+    "category": "multi_passage",
+    "question": "What are the rules for personal telephone and cell phone use at work and the consequences for abuse?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [32, 33],
+    "expected_answer": "There is a cell phone policy restricting personal phone use, and a desk clerk who fails to answer a hotel phone by the second ring because of cell phone use, or who uses a phone instead of acknowledging a guest within 5 seconds, will be fired immediately.",
+    "expected_facts": ["cell phone", "fired immediately", "guest"],
+    "is_answerable": true
+  },
+  {
+    "id": "mp_holidays_payday",
+    "category": "multi_passage",
+    "question": "When are employees paid and what happens if payday falls on a weekend or company holiday?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [17],
+    "expected_answer": "The Company's paydays are every two weeks on Friday, and if the regular payday falls on a weekend or Company holiday, payment is handled accordingly (the handbook notes this in the Hours and Payroll Practices section).",
+    "expected_facts": ["every two weeks", "Friday"],
+    "is_answerable": true
+  },
+  {
+    "id": "cf_personal_vs_medical",
+    "category": "confusable_similar",
+    "question": "Which leave is limited to a maximum of 3 days and which leave requires a physician's statement?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [28],
+    "expected_answer": "Personal leave is unpaid and for a specified period not to exceed 3 days, while medical leave requires a statement from your physician describing the disability and expected return date.",
+    "expected_facts": ["3 days", "physician"],
+    "is_answerable": true
+  },
+  {
+    "id": "cf_housing_occupancy",
+    "category": "confusable_similar",
+    "question": "What is the weekly housing deduction for double occupancy compared with single occupancy?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [33],
+    "expected_answer": "The deduction is $75 per week for double occupancy and $300 per week for single occupancy.",
+    "expected_facts": ["75", "300", "occupancy"],
+    "is_answerable": true
+  },
+  {
+    "id": "cf_cobra_18_vs_36",
+    "category": "confusable_similar",
+    "question": "When does COBRA coverage last up to 18 months versus up to 36 months?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [22],
+    "expected_answer": "COBRA generally lasts up to 18 months when the qualifying event is termination of employment or reduction of hours, but can last up to 36 months in cases such as the death of the employee, divorce, or when the employee becomes entitled to Medicare shortly before the event.",
+    "expected_facts": ["18 months", "36 months"],
+    "is_answerable": true
+  },
+  {
+    "id": "cf_sick_carryover",
+    "category": "confusable_similar",
+    "question": "How do the sick leave carryover maximums differ depending on company size?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [29],
+    "expected_answer": "If the employer has ten or fewer employees, unused accrued sick time carries over up to 40 hours maximum; otherwise it carries over up to 72 hours maximum.",
+    "expected_facts": ["40 hours", "72 hours"],
+    "is_answerable": true
+  },
+  {
+    "id": "cf_funeral_vs_jury",
+    "category": "confusable_similar",
+    "question": "How does funeral leave compare with jury duty regarding pay?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [27],
+    "expected_answer": "Funeral leave is without pay for regular full-time employees beginning their first full day of employment, while jury duty is given as time off without pay.",
+    "expected_facts": ["funeral", "jury duty", "without pay"],
+    "is_answerable": true
+  },
+  {
+    "id": "cf_harassment_internet_blocking",
+    "category": "confusable_similar",
+    "question": "Does the company's internet policy allow employees to view inappropriate material if a site was not blocked?",
+    "expected_document": "employee_handbook.pdf",
+    "expected_pages": [8],
+    "expected_answer": "No. If employees encounter inappropriate or sexually explicit material they must immediately disconnect from the site, regardless of whether the site was subject to company blocking software.",
+    "expected_facts": ["disconnect", "blocking software", "inappropriate"],
+    "is_answerable": true
+  },
+  {
+    "id": "un_quantum",
+    "category": "unanswerable",
+    "question": "What is the company policy regarding quantum computing encryption keys and aerospace export controls?",
+    "expected_document": null,
+    "expected_pages": [],
+    "expected_answer": "The provided documents do not contain information about quantum computing encryption keys or aerospace export controls; the assistant should say it could not find this in the documents.",
+    "expected_facts": [],
+    "is_answerable": false
+  },
+  {
+    "id": "un_stock_2030",
+    "category": "unanswerable",
+    "question": "How many stock options are granted to interns in the 2030 fiscal year compensation plan?",
+    "expected_document": null,
+    "expected_pages": [],
+    "expected_answer": "The documents do not describe a 2030 stock option compensation plan; the assistant should abstain.",
+    "expected_facts": [],
+    "is_answerable": false
+  },
+  {
+    "id": "un_ceo_name",
+    "category": "unanswerable",
+    "question": "Who is the current Chief Executive Officer of the company and when were they appointed?",
+    "expected_document": null,
+    "expected_pages": [],
+    "expected_answer": "The handbook does not name the Chief Executive Officer; the assistant should say this information is not in the documents.",
+    "expected_facts": [],
+    "is_answerable": false
+  },
+  {
+    "id": "un_paid_parental",
+    "category": "unanswerable",
+    "question": "How many weeks of fully paid parental leave does the company provide to new parents?",
+    "expected_document": null,
+    "expected_pages": [],
+    "expected_answer": "The handbook references unpaid FMLA leave but does not specify fully paid parental leave weeks; the assistant should abstain.",
+    "expected_facts": [],
+    "is_answerable": false
+  },
+  {
+    "id": "un_401k_match",
+    "category": "unanswerable",
+    "question": "What percentage does the company match for employee 401(k) retirement contributions?",
+    "expected_document": null,
+    "expected_pages": [],
+    "expected_answer": "The documents do not mention a 401(k) match; the assistant should say it could not find this information.",
+    "expected_facts": [],
+    "is_answerable": false
+  },
+  {
+    "id": "un_remote_work",
+    "category": "unanswerable",
+    "question": "What is the company's policy on fully remote work and home office stipends?",
+    "expected_document": null,
+    "expected_pages": [],
+    "expected_answer": "The handbook does not describe a remote work or home office stipend policy; the assistant should abstain.",
+    "expected_facts": [],
+    "is_answerable": false
+  },
+  {
+    "id": "un_tuition",
+    "category": "unanswerable",
+    "question": "How much tuition reimbursement is available per year for employee education?",
+    "expected_document": null,
+    "expected_pages": [],
+    "expected_answer": "The documents do not include a tuition reimbursement amount; the assistant should say the information is not available.",
+    "expected_facts": [],
+    "is_answerable": false
+  },
+  {
+    "id": "un_vacation_days",
+    "category": "unanswerable",
+    "question": "How many days of paid vacation accrue per year for a new full-time employee?",
+    "expected_document": null,
+    "expected_pages": [],
+    "expected_answer": "The handbook covers paid sick time but does not specify annual paid vacation accrual; the assistant should abstain rather than guess.",
+    "expected_facts": [],
+    "is_answerable": false
+  }
+]

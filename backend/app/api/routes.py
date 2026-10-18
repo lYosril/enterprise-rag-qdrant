@@ -504,19 +504,33 @@ def chat_stream(
     db.commit()
 
     def event_generator():
-        # Stream answer tokens word by word
-        words = full_answer.split(" ")
-        for i, word in enumerate(words):
-            token = word + (" " if i < len(words) - 1 else "")
-            yield f"data: {json.dumps({'type': 'token', 'token': token})}\n\n"
+        try:
+            # Stream answer tokens word by word
+            words = full_answer.split(" ")
+            for i, word in enumerate(words):
+                token = word + (" " if i < len(words) - 1 else "")
+                yield f"data: {json.dumps({'type': 'token', 'token': token})}\n\n"
 
-        # Stream sources metadata
-        sources_payload = [
-            SourceResponse(**s).model_dump()
-            for s in result["sources"]
-        ]
-        yield f"data: {json.dumps({'type': 'sources', 'sources': sources_payload, 'conversation_id': str(conversation.id)})}\n\n"
-        yield "data: [DONE]\n\n"
+            # Stream sources metadata
+            sources_payload = []
+            for s in result.get("sources", []):
+                try:
+                    sources_payload.append(SourceResponse(**s).model_dump(mode="json"))
+                except Exception:
+                    sources_payload.append({
+                        "document_id": str(s.get("document_id", "")),
+                        "document": str(s.get("document", "")),
+                        "page": int(s.get("page", 1)),
+                        "text": str(s.get("text", "")),
+                        "score": float(s.get("score", 0.0)),
+                    })
+
+            yield f"data: {json.dumps({'type': 'sources', 'sources': sources_payload, 'conversation_id': str(conversation.id)}, default=str)}\n\n"
+            yield "data: [DONE]\n\n"
+        except Exception as gen_exc:
+            logger.exception("Error in SSE event_generator: %s", gen_exc)
+            yield f"data: {json.dumps({'type': 'error', 'detail': str(gen_exc)})}\n\n"
+            yield "data: [DONE]\n\n"
 
     return StreamingResponse(
         event_generator(),

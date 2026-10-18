@@ -97,6 +97,9 @@ export async function streamQuestion({
             onToken(parsed.token)
           } else if (parsed.type === 'sources') {
             onSources(parsed.sources || [], parsed.conversation_id)
+          } else if (parsed.type === 'error') {
+            onError(new Error(parsed.detail || 'An error occurred during streaming'))
+            return
           }
         } catch {
           // ignore malformed SSE chunk

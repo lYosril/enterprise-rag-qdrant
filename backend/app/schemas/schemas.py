@@ -17,11 +17,13 @@ class DocumentResponse(BaseModel):
 
 
 class SourceResponse(BaseModel):
-    document_id: UUID
+    document_id: UUID | str
     document: str
     page: int
     text: str
     score: float
+
+    model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class ChatRequest(BaseModel):

@@ -114,6 +114,7 @@ def answer_question(
                 "in the provided documents."
             ),
             "sources": [],
+            "token_usage": {},
         }
 
     context = format_grouped_context(sources)
@@ -132,9 +133,14 @@ def answer_question(
         },
     ]
 
-    answer_text = chat_completion(messages)
+    answer_result = chat_completion(messages, return_usage=True)
+    if isinstance(answer_result, tuple):
+        answer_text, usage = answer_result
+    else:
+        answer_text, usage = answer_result, {}
 
     return {
         "answer": answer_text,
         "sources": sources,
+        "token_usage": usage or {},
     }

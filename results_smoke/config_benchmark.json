@@ -1,0 +1,234 @@
+{
+  "metadata": {
+    "generated_at": "2026-10-16T14:06:09.777370+00:00",
+    "dataset": "backend\\evaluation\\benchmark_questions.json",
+    "n_questions": 2,
+    "documents": [
+      "employee_handbook.pdf"
+    ],
+    "n_chunks": 172,
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "llm_model": "openai/gpt-oss-120b",
+    "dense_candidate_limit": 20,
+    "lexical_candidate_limit": 20,
+    "final_top_k": 5,
+    "rrf_k": 60,
+    "input_cost_per_1m": 0.15,
+    "output_cost_per_1m": 0.6,
+    "retrieval_only": false
+  },
+  "configs": {
+    "A_dense_top5": {
+      "aggregate": {
+        "label": "A \u2014 Dense top-5 (baseline)",
+        "n_questions": 2,
+        "n_answerable": 2,
+        "n_unanswerable": 0,
+        "recall_at_5": 1.0,
+        "hit_rate_at_5": 1.0,
+        "mrr": 0.625,
+        "answer_correctness": 1.0,
+        "answer_correctness_answerable": 1.0,
+        "fact_coverage": 0.6667,
+        "citation_validity": 1.0,
+        "abstention_quality": 0.0,
+        "abstention_quality_all": 1.0,
+        "latency_mean_s": 2.917,
+        "latency_p50_s": 2.917,
+        "latency_p95_s": 3.7037,
+        "retrieval_mean_s": 0.0147,
+        "generation_mean_s": 2.9023,
+        "mean_total_tokens": 3281.0,
+        "mean_prompt_tokens": 2196.5,
+        "mean_completion_tokens": 1084.5,
+        "total_cost_usd": 0.00196,
+        "mean_cost_usd": 0.001
+      },
+      "per_question": [
+        {
+          "id": "sp_equal_employment",
+          "category": "single_passage",
+          "question": "What is the company's equal employment policy?",
+          "is_answerable": true,
+          "expected_document": "employee_handbook.pdf",
+          "expected_pages": [
+            5
+          ],
+          "expected_facts": [
+            "equal opportunity",
+            "race",
+            "religion"
+          ],
+          "expected_answer": "The Company is an equal opportunity employer and grants equal employment opportunities without regard to race, religion, color, national origin, sex, sexual orientation, pregnancy, age, veteran status, disability, or other protected classification.",
+          "sources": [
+            {
+              "document": "employee_handbook.pdf",
+              "page": 5,
+              "score": 0.7585223317146301
+            },
+            {
+              "document": "employee_handbook.pdf",
+              "page": 2,
+              "score": 0.605237603187561
+            },
+            {
+              "document": "employee_handbook.pdf",
+              "page": 3,
+              "score": 0.5923758149147034
+            },
+            {
+              "document": "employee_handbook.pdf",
+              "page": 5,
+              "score": 0.538727343082428
+            },
+            {
+              "document": "employee_handbook.pdf",
+              "page": 3,
+              "score": 0.5347163677215576
+            }
+          ],
+          "retrieval_ms": 11.300699999992503,
+          "answer": "**Company\u2019s Equal Employment Policy (as stated in the Employee Handbook)**  \n\n- The Company declares itself an **equal\u2011opportunity employer**.  \n- It **grants equal employment opportunities to qualified persons** **without regard to**:  \n  - race, religion, color, national origin, sex, sexual orientation, pregnancy, age, veterans\u2019 or military status, **or any non\u2011job\u2011related physical or mental handicap or disability** (and any other classification protected by applicable federal, state, or local laws), **except where a bona\u2011fide occupational disability or qualification applies**.  \n- The Company **provides equal opportunities** in **employment, promotion, wages, benefits, and all other privileges, terms, and conditions of employment**.  \n- **All recruiting, hiring, training, and promoting** for every job classification are performed **without regard to race, color, religion, sex, age, or national origin** (and the other protected categories listed above), **unless a bona\u2011fide occupational qualification exists**.  \n- Employment decisions are made to further the principle of **equal employment**, and promotion decisions follow **Equal Employment Opportunity principles**, using only valid job requirements.  \n\n**Source:** *employee_handbook.pdf*, page\u202f5.",
+          "generation_ms": 3779.7927999999956,
+          "answer_usage": {
+            "queue_time": 1.731363001,
+            "prompt_tokens": 1151,
+            "prompt_time": 0.064582641,
+            "completion_tokens": 633,
+            "completion_time": 1.383959074,
+            "total_tokens": 1784,
+            "total_time": 1.448541715,
+            "completion_tokens_details": {
+              "reasoning_tokens": 367
+            }
+          },
+          "generation_error": null,
+          "verdict": {
+            "abstained": false,
+            "correctness": 1.0,
+            "citation_supported": 1.0,
+            "rationale": "The system answer accurately restates the company's equal employment policy, matching the reference answer and the retrieved evidence. The evidence from employee_handbook.pdf page 5 explicitly states that the company is an equal opportunity employer and lists the protected categories (race, religion",
+            "usage": {
+              "queue_time": 0.268189098,
+              "prompt_tokens": 1089,
+              "prompt_time": 0.200352289,
+              "completion_tokens": 559,
+              "completion_time": 1.191134043,
+              "total_tokens": 1648,
+              "total_time": 1.391486332,
+              "completion_tokens_details": {
+                "reasoning_tokens": 410
+              }
+            },
+            "error": null
+          },
+          "recall_at_5": 1.0,
+          "hit_at_5": true,
+          "mrr": 1.0,
+          "abstained": false,
+          "abstention_quality": 1.0,
+          "correctness": 1.0,
+          "fact_coverage": 0.6666666666666666,
+          "citation_validity": 1.0,
+          "latency_s": 3.791093499999988,
+          "prompt_tokens": 2240,
+          "completion_tokens": 1192,
+          "total_tokens": 3432,
+          "cost_usd": 0.0010512
+        },
+        {
+          "id": "sp_at_will",
+          "category": "single_passage",
+          "question": "On what basis can my employment be terminated?",
+          "is_answerable": true,
+          "expected_document": "employee_handbook.pdf",
+          "expected_pages": [
+            4
+          ],
+          "expected_facts": [
+            "at will",
+            "terminated",
+            "any reason"
+          ],
+          "expected_answer": "Employment is on an at-will basis and may be terminated by the Company or the employee at any time for any reason.",
+          "sources": [
+            {
+              "document": "employee_handbook.pdf",
+              "page": 35,
+              "score": 0.6188968420028687
+            },
+            {
+              "document": "employee_handbook.pdf",
+              "page": 35,
+              "score": 0.5571657419204712
+            },
+            {
+              "document": "employee_handbook.pdf",
+              "page": 5,
+              "score": 0.5219700932502747
+            },
+            {
+              "document": "employee_handbook.pdf",
+              "page": 4,
+              "score": 0.504873514175415
+            },
+            {
+              "document": "employee_handbook.pdf",
+              "page": 20,
+              "score": 0.46779870986938477
+            }
+          ],
+          "retrieval_ms": 18.09999999932188,
+          "answer": "**Basis for termination of employment (as described in the employee handbook)**  \n\n| Document & Page | What the handbook says |\n|-----------------|------------------------|\n| **employee_handbook.pdf, page\u202f4** | \u201cEmployment at the Company is on an **\u2018at\u2011will\u2019 basis and may be terminated by the Company or the employee at any time for any reason**.\u201d It also notes that any change to this at\u2011will status requires prior written approval of the President. |\n| **employee_handbook.pdf, page\u202f5** | The handbook adds that a supervisor may **terminate immediately without warning for serious offenses** (e.g., \u201ctheft or fraud\u201d). |\n| **employee_handbook.pdf, page\u202f35** (Voluntary Termination section) | If an employee **chooses to leave**, they are asked to give **two weeks\u2019 written notice**; failure to do so makes the employee ineligible for re\u2011hire. Additionally, \u201cwalking off the job or absence for more than\u202f1\u202fday without a report \u2026 will constitute a voluntary quit.\u201d |\n\n### Summary\n- **At\u2011will employment**: Either the Company or the employee can end the relationship at any time, for any reason, unless a specific written change is approved by the President.  \n- **Immediate termination for serious misconduct**: The Company may terminate without warning for grave offenses such as theft or fraud.  \n- **Voluntary quit**: Employees who resign without the required two\u2011week written notice, or who abandon the job (e.g., walking off or being absent >\u202f1\u202fday without reporting), are considered to have voluntarily terminated their employment.  \n\nThese are the only bases for termination provided in the supplied handbook.",
+          "generation_ms": 2024.7945999999502,
+          "answer_usage": {
+            "queue_time": 0.218310465,
+            "prompt_tokens": 962,
+            "prompt_time": 0.074260516,
+            "completion_tokens": 545,
+            "completion_time": 1.14917385,
+            "total_tokens": 1507,
+            "total_time": 1.223434366,
+            "completion_tokens_details": {
+              "reasoning_tokens": 188
+            }
+          },
+          "generation_error": null,
+          "verdict": {
+            "abstained": false,
+            "correctness": 1.0,
+            "citation_supported": 1.0,
+            "rationale": "The system answer correctly states that employment is at-will and may be terminated by either party at any time for any reason, as shown on page 4. It also accurately adds that the company may terminate immediately for serious misconduct such as theft or fraud, supported by page 5. Additionally, it ",
+            "usage": {
+              "queue_time": 0.404828311,
+              "prompt_tokens": 1191,
+              "prompt_time": 0.32854097,
+              "completion_tokens": 432,
+              "completion_time": 0.937426428,
+              "total_tokens": 1623,
+              "total_time": 1.265967398,
+              "completion_tokens_details": {
+                "reasoning_tokens": 280
+              }
+            },
+            "error": null
+          },
+          "recall_at_5": 1.0,
+          "hit_at_5": true,
+          "mrr": 0.25,
+          "abstained": false,
+          "abstention_quality": 1.0,
+          "correctness": 1.0,
+          "fact_coverage": 0.6666666666666666,
+          "citation_validity": 1.0,
+          "latency_s": 2.042894599999272,
+          "prompt_tokens": 2153,
+          "completion_tokens": 977,
+          "total_tokens": 3130,
+          "cost_usd": 0.0009091499999999998
+        }
+      ]
+    }
+  }
+}

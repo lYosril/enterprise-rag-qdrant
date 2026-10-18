@@ -12,6 +12,7 @@ celery_app = Celery(
     "enterprise_rag",
     broker=redis_url,
     backend=redis_url,
+    include=["app.tasks"],
 )
 
 celery_app.conf.update(

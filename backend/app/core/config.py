@@ -28,6 +28,11 @@ class Settings(BaseSettings):
     rag_use_rerank: bool = True
     rrf_k: int = 60
 
+    # Cost reporting (USD per 1M tokens). Defaults match Groq's published
+    # pricing for openai/gpt-oss-120b (input $0.15, output $0.60) as of 2025.
+    llm_input_cost_per_1m: float = 0.15
+    llm_output_cost_per_1m: float = 0.60
+
     # Agent controls & limits (Milestone 6)
     rag_enable_agent: bool = True
     agent_max_retrieval_attempts: int = 2

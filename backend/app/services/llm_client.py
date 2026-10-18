@@ -29,7 +29,8 @@ def chat_completion(
     messages: list[dict],
     max_retries: int = 3,
     initial_backoff_sec: float = 0.5,
-) -> str:
+    return_usage: bool = False,
+):
     """
     Execute a chat completion request with resilient retries for transient errors.
 
@@ -41,11 +42,16 @@ def chat_completion(
         Maximum retry attempts for transient errors (default 3).
     initial_backoff_sec : float
         Base backoff delay in seconds.
+    return_usage : bool
+        When True, return a ``(content, usage)`` tuple instead of just the
+        content string. ``usage`` is the provider usage dictionary (may be
+        empty). Defaults to False so existing callers are unaffected.
 
     Returns
     -------
-    str
-        Grounded answer content stripped of leading/trailing whitespace.
+    str | tuple[str, dict]
+        Grounded answer content stripped of leading/trailing whitespace, and
+        optionally the token usage dictionary.
     """
     url = f"{settings.llm_base_url.rstrip('/')}/chat/completions"
     headers = {
@@ -105,6 +111,8 @@ def chat_completion(
             if ct := usage.get("completion_tokens"):
                 LLM_TOKENS_TOTAL.labels(kind="completion").inc(ct)
 
+            if return_usage:
+                return content.strip(), usage
             return content.strip()
 
         except (requests.Timeout, requests.ConnectionError) as exc:

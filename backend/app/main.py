@@ -32,16 +32,29 @@ app = FastAPI(
 
 app.include_router(auth_router)
 
+import os
+
 # Configure CORS for development and deployment origins
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
+cors_origins_raw = os.getenv("CORS_ORIGINS") or os.getenv("cors_origins", "")
+if cors_origins_raw:
+    allowed_origins = [o.strip() for o in cors_origins_raw.split(",") if o.strip()]
+else:
+    allowed_origins = [
+        "http://localhost",
+        "http://localhost:80",
+        "http://127.0.0.1",
+        "http://127.0.0.1:80",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:4173",
-    ],
+        "http://127.0.0.1:4173",
+    ]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

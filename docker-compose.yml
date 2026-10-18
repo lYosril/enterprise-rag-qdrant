@@ -1,61 +1,65 @@
 services:
   postgres:
     image: postgres:16
-    container_name: enterprise-rag-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: enterprise_rag
       POSTGRES_USER: rag_user
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U rag_user -d enterprise_rag"]
       interval: 5s
       timeout: 5s
       retries: 10
+    ports: []  # no public ports
 
   qdrant:
     image: qdrant/qdrant:latest
-    container_name: enterprise-rag-qdrant
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:6333:6333"
     volumes:
       - qdrant_data:/qdrant/storage
+    networks:
+      - app_net
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:6333/healthz || exit 1"]
+      test: ["CMD-SHELL","bash -c 'echo > /dev/tcp/127.0.0.1/6333'"]
       interval: 10s
       timeout: 5s
       retries: 10
+    ports: []  # no public ports
 
   redis:
     image: redis:7-alpine
-    container_name: enterprise-rag-redis
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:6379:6379"
+    networks:
+      - app_net
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 3s
       retries: 5
+    ports: []  # no public ports
 
   backend:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    container_name: enterprise-rag-backend
+    restart: unless-stopped
     env_file:
       - .env
     environment:
       DATABASE_URL: postgresql+psycopg://rag_user:${POSTGRES_PASSWORD}@postgres:5432/enterprise_rag
       QDRANT_URL: http://qdrant:6333
       REDIS_URL: redis://redis:6379/0
-    ports:
-      - "127.0.0.1:8000:8000"
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      PYTHONPATH: /app/backend:/app
+    volumes:
+      - document_storage:/app/data/documents
+    networks:
+      - app_net
     depends_on:
       postgres:
         condition: service_healthy
@@ -63,20 +67,32 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    restart: unless-stopped
+    entrypoint: ["/bin/sh", "/app/entrypoint.sh"]
+    ports:
+     - "8000:8000"  # internal only; expose via reverse proxy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   worker:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    container_name: enterprise-rag-worker
-    command: ["celery", "-A", "app.worker:celery_app", "worker", "--loglevel=INFO"]
+    restart: unless-stopped
     env_file:
       - .env
     environment:
+      CELERY_WORKER: "1"
       DATABASE_URL: postgresql+psycopg://rag_user:${POSTGRES_PASSWORD}@postgres:5432/enterprise_rag
       QDRANT_URL: http://qdrant:6333
       REDIS_URL: redis://redis:6379/0
+      PYTHONPATH: /app/backend:/app
+    volumes:
+      - document_storage:/app/data/documents
+    networks:
+      - app_net
     depends_on:
       postgres:
         condition: service_healthy
@@ -84,19 +100,28 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    restart: unless-stopped
+    entrypoint: ["/bin/sh", "/app/entrypoint.sh"]
+    ports: []  # no public ports
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: enterprise-rag-frontend
-    ports:
-      - "127.0.0.1:3000:80"
+    restart: unless-stopped
+    environment:
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    networks:
+      - app_net
     depends_on:
       - backend
-    restart: unless-stopped
+    ports:
+      - "80:80"
 
 volumes:
   postgres_data:
   qdrant_data:
+  document_storage:
+
+networks:
+  app_net:
+    driver: bridge
